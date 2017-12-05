@@ -62,11 +62,17 @@ class NES:
 		for i, n in enumerate(l):
 			b += n << (i*shift)
 		return b
+
 	def run(self):
 		reset_vector = self.listBit(self.RAM[0xfffc:0xfffe])
 		self.memPointer = reset_vector
-		code = self.RAM[self.memPointer]
-		print(opcodes[code])
+		for _ in range(5):
+			code = self.RAM[self.memPointer]
+			instr = opcodes[code]
+			data_length = bLen[instr[1]]
+			data = self.listBit(self.RAM[self.memPointer+1:self.memPointer+data_length])
+			self.memPointer += data_length
+			print(code, instr, data_length, data)
 		
 
 n = NES(path)
