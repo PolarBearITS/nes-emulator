@@ -1,4 +1,6 @@
 path = 'Donkey Kong (Japan).nes'
+import math
+from op import opcodes, bLen
 class NES:
 	def __init__(self, path):
 		self.file = open(path, 'rb').read()
@@ -55,10 +57,16 @@ class NES:
 		self.RAM[0x8000:] = self.prgROM * (0x8000//prgRomSize)
 		self.memPointer = 0
 
+	def listBit(self, l, shift=8):
+		b = 0
+		for i, n in enumerate(l):
+			b += n << (i*shift)
+		return b
 	def run(self):
-		reset_vector = (self.RAM[0xfffc] << 8) + self.RAM[0xfffd]
+		reset_vector = self.listBit(self.RAM[0xfffc:0xfffe])
 		self.memPointer = reset_vector
-		print(self.RAM[self.memPointer])
+		code = self.RAM[self.memPointer]
+		print(opcodes[code])
 		
 
 n = NES(path)
